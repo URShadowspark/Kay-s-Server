@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Data</title>
+</head>
+
+<style>
+
+    *{
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        color: white;
+        background: forestgreen;
+        font-size: 25px;
+        outline: none;
+    }
+    
+    input{
+        background:#cdcdcd50 ;
+        border-radius: 20px;
+        border: none;
+    }
+    
+    button{
+        width: 98%;
+        margin-top: 2%;
+        height: 50px;
+        background: black;
+        border: none;
+        border-radius: 20px;
+    }
+    
+    .Image{
+        position: relative;
+        width: 90%;
+        height: 300px;
+        background: #cdcdcd50;
+        margin-top: 3%;
+        border-radius: 5px;
+    }
+
+    .MyData{
+        position: relative;
+        width: 100%;
+        height: auto;
+        background: #cdcdcd50;
+    }
+    
+    .MyDiver{
+        position: relative;
+        width: 100%;
+        height: 350px;
+        background: gainsboro;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .Imaged{
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        background: blue;
+        left: 0;
+    }
+
+    .MyHolder{
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        right: 0;
+        display: block;
+    }
+
+    h1{
+        font-size: 16px;
+    }
+
+    </style>
+    
+<body>
+
+    <br>
+
+    <h2>Kay Server Data</h2>
+
+    <br>
+
+    <input type="text" class="ServerName" placeholder="Enter Server Name" >
+
+    <br><br>
+
+    <button class="ServerNamer" onclick="GetDataInformation()">Get Data</button>
+
+    <div class="MyData" >Data Here</div>
+    
+</body>
+
+<script>
+
+    const ServerName=document.querySelector(".ServerName");
+
+    const ServerNamer=document.querySelector(".ServerNamer");
+
+    const MyData=document.querySelector(".MyData");
+
+    const GetDataInformation=()=>{
+
+            if (ServerName.value) {
+
+                  ServerNamer.innerHTML='Please Wait'
+
+                const DATA={
+                "sheetName":ServerName.value,
+                "spreadsheetUrl":'https://docs.google.com/spreadsheets/d/1RnwefQd4PRrBxOdB4PqfMh1Q2jQo5uxdJzcV343naUs/edit?gid=0#gid=0',
+            };
+    
+            fetch('https://script.google.com/macros/s/AKfycbwc_ZdByDbw4u-OcEcAaJQt11bfAe3znQ7pYre6pl1KOyIrx8E8PN9yIs1KVcLYPjQlOw/exec',{
+                method:'Post',
+                mode:'cors',
+                body:JSON.stringify(DATA)
+            })
+            
+            .then(res =>res.json())
+            
+            .then(data =>{
+
+                MyData.innerHTML='';
+            
+                data.forEach(element => {
+
+                    console.log(element);
+
+                    const DIVER=document.createElement("div");
+
+                    DIVER.innerHTML=`
+
+                    
+
+                    <img class='Imaged' src='${element.Image}'/>
+
+                    <div class='MyHolder' >
+
+                        <h1>${element.ID}</h1>
+
+                        <br><br>
+
+                        <h1>${element.UserName}</h1>
+
+                        <br><br>
+
+                        <h1>${element.UserEmail}</h1>
+
+                        <br><br>
+
+                        <h1>${element.UserPassword}</h1>
+
+                        <br><br>
+
+                    </div>
+                    
+                    `;
+
+                    DIVER.classList.add('MyDiver')
+
+                    MyData.append(DIVER);
+                    
+                });
+            
+            } )
+            
+            .catch(error =>{
+            
+                alert("Error Fetching Server Data")
+            
+            } );
+            
+        } else {
+
+            alert("Enter Server Name")
+            
+        }
+
+    };   
+
+</script>
+
+</html>

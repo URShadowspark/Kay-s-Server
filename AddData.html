@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Data</title>
+</head>
+
+<style>
+
+*{
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    color: white;
+    background: forestgreen;
+    font-size: 25px;
+    outline: none;
+}
+
+input{
+    background:#cdcdcd50 ;
+    border-radius: 20px;
+    border: none;
+}
+
+button{
+    width: 98%;
+    margin-top: 2%;
+    height: 50px;
+    background: black;
+    border: none;
+    border-radius: 20px;
+}
+
+.Image{
+    position: relative;
+    width: 90%;
+    height: 300px;
+    background: #cdcdcd50;
+    margin-top: 3%;
+    border-radius: 5px;
+}
+
+</style>
+
+<body>
+
+    <br>
+
+    <h2>Kay Server Data</h2>
+
+    <br>
+
+    <input type="text" class="ServerName" placeholder="Enter Server Name" >
+
+    <br><br>
+
+    <h2>Enter Server Information</h2>
+
+    <br><br>
+
+    <input type="text" class="Name" placeholder="Enter User Name" >
+
+    <br><br>
+
+    <input type="text" class="Email" placeholder="Enter User Email" >
+
+    <br><br>
+
+    <input type="text" class="Password" placeholder="Enter User Password" >
+
+    <Img class="Image" src=""/>
+
+    <button class="CreateServer">Add User</button>
+    
+</body>
+
+<script>
+
+    const ServerName=document.querySelector(".ServerName");
+    const Name=document.querySelector(".Name");
+    const Email=document.querySelector(".Email");
+    const Password=document.querySelector(".Password");
+    const  Imager=document.querySelector(".Image");
+    const CreateServer=document.querySelector(".CreateServer");
+
+    const IMAGEPICKER = (imageElement, callback) => {
+
+        const input = document.createElement("input");
+
+        input.type = "file";
+
+        input.style.display = "none";
+
+        input.accept = "image/*";
+
+        document.body.appendChild(input);
+
+        input.addEventListener("change", function () {
+
+            var file = this.files[0];
+
+            if (!file) return;
+
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                var image = new Image();
+
+                image.src = event.target.result;
+
+                image.onload = function () {
+
+                    var maxWidth = 800;
+
+                    var maxHeight = 600;
+
+                    var canvas = document.createElement("canvas");
+
+                    var ctx = canvas.getContext("2d");
+
+                    var width = image.width;
+
+                    var height = image.height;
+
+                    if (width > height) {
+
+                        if (width > maxWidth) {
+
+                            height *= maxWidth / width;
+
+                            width = maxWidth;
+
+                        }
+
+                    } else {
+
+                        if (height > maxHeight) {
+
+                            width *= maxHeight / height;
+
+                            height = maxHeight;
+
+                        }
+
+                    }
+
+                    canvas.width = width;
+
+                    canvas.height = height;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.drawImage(image, 0, 0, width, height);
+
+                    var base64Data;
+
+                    if (file.type === "image/png") {
+
+                        base64Data = canvas.toDataURL("image/png");
+
+                    } else {
+
+                        var quality = 0.7;
+
+                        base64Data = canvas.toDataURL("image/jpeg", quality);
+
+                        while (base64Data.length > 49800 && quality > 0) {
+
+                            quality -= 0.1;
+
+                            base64Data = canvas.toDataURL("image/jpeg", quality);
+
+                        }
+
+                    }
+
+                    if (base64Data.length < 49800) {
+
+                        imageElement.src = base64Data;
+
+                        callback(base64Data);
+
+                    } else {
+
+                        TOAST("Image Format Error");
+
+                    }
+
+                };
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });
+
+        input.click();
+
+        input.remove();
+
+    };
+
+    Imager.addEventListener('click',()=>{
+
+        IMAGEPICKER(Imager,(data)=>{
+
+            sessionStorage.setItem('Image',data);
+
+        });
+
+    });
+
+    CreateServer.addEventListener("click",()=>{
+
+        if (ServerName.value) {
+
+            if (Name.value) {
+
+            if (Email.value) {
+
+                if (Password.value) {
+
+                    const DATA=['UserName','UserPassword','UserEmail','Image'];
+
+                    const MYDATA=[Name.value,Email.value,Password.value,sessionStorage.getItem("Image")]
+
+                    CreateServer.innerHTML='Please Wait';
+
+                    const MYADATA={
+                        "sheetName":ServerName.value,
+                        "spreadsheetUrl":'https://docs.google.com/spreadsheets/d/1RnwefQd4PRrBxOdB4PqfMh1Q2jQo5uxdJzcV343naUs/edit?gid=0#gid=0',
+                        "Headers":DATA,
+                        "Data":MYDATA
+                    };
+
+                fetch('https://script.google.com/macros/s/AKfycbw_d9NafTQycKhhTL0Yhjy12g8DRP7bfBVoLqrdaofT6SI1_zxCEZKtl-Bsaoz0omIOCQ/exec',{
+                    method:'Post',
+                    mode:'cors',
+                    body:JSON.stringify(MYADATA)
+                })
+
+                .then(res =>res.json())
+
+                .then(data =>{
+
+                    alert('Data Inserted Successfully');
+
+                    location.href='./AddData.html';
+
+                } )
+
+                .catch(error =>{
+
+                    console.log(error)
+
+                    CreateServer.innerHTML='Add User';
+
+                    alert('Error Inserting Data')
+
+                } );
+
+
+                } else {
+
+                    alert('Enter User Password');
+                    
+                }
+
+                } else {
+
+                    alert('Enter User Emal');
+                    
+                }
+
+            } else {
+
+                alert('Enter User Name');
+
+            }
+            
+            } else {
+
+                alert("Enter A Server Name")
+                
+            }
+
+    });
+
+</script>
+
+</html>

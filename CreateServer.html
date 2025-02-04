@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kay Server</title>
+</head>
+
+<style>
+
+*{
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    color: white;
+    background: forestgreen;
+    font-size: 25px;
+    outline: none;
+}
+
+input{
+    background:#cdcdcd50 ;
+    border-radius: 20px;
+    border: none;
+}
+
+button{
+    width: 98%;
+    margin-top: 2%;
+    height: 50px;
+    background: black;
+    border: none;
+    border-radius: 20px;
+}
+
+</style>
+
+<body>
+
+    <br><br>
+
+    <h3>Kay Server</h3>
+
+    <br><br>
+
+    <input type="text" class="ServerName" placeholder="Enter Server Name" >
+
+    <br><br>
+
+    <button onclick="CreateServer()"  class="CreateServer">Create A Server</button>
+    
+</body>
+
+<script>
+
+
+    const ServerName=document.querySelector(".ServerName");
+
+    const ServerButton=document.querySelector(".CreateServer");
+
+    const CreateServer=()=>{
+
+        ServerButton.innerHTML='Please Wait';
+
+        if (ServerName.value) {
+
+            const DATA={
+                "sheetName":ServerName.value,
+                "spreadsheetUrl":'https://docs.google.com/spreadsheets/d/1RnwefQd4PRrBxOdB4PqfMh1Q2jQo5uxdJzcV343naUs/edit?gid=0#gid=0'
+            };
+            fetch('https://script.google.com/macros/s/AKfycby1mVvqOsNL6dziqyCRHucg5QeVCeeFOtKHmxxtXBWtY38ClEM65rFux1gWfkDFdQDr0w/exec',{
+                method:'Post',
+                mode:'cors',
+                body:JSON.stringify(DATA)
+            })
+            
+            .then(res =>res.json())
+            
+            .then(data =>{
+            
+                alert('Server Created Successfully')
+
+                ServerButton.innerHTML='Create Server';
+            
+            } )
+            
+            .catch(error =>{
+            
+                alert('Server Creation Error');
+            
+            } );
+        
+        } else {
+
+            alert("Add Server Name")
+            
+        };
+    }
+
+</script>
+
+</html>
